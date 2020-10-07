@@ -9,15 +9,35 @@ const isMac = process.platform === 'darwin';
 let mainWindow;
 let aboutWindow;
 
+const createAboutWindow = () => {
+  aboutWindow = new BrowserWindow({
+    title: 'About ImageShrink',
+    width: 300,
+    height: 300,
+    icon: `${__dirname}/assets/icons/Icon_256x256.png`,
+    resizable: false,
+    backgroundColor: 'white',
+  });
+
+  aboutWindow.loadFile('./app/about.html');
+};
+
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
     title: 'ImageShrink',
-    width: 500,
+    width: isDev ? 800 : 500,
     height: 600,
     icon: `${__dirname}/assets/icons/Icon_256x256.png`,
     resizable: isDev,
     backgroundColor: 'white',
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.loadFile('./app/index.html');
 };
@@ -35,19 +55,6 @@ app.on('ready', () => {
 
   mainWindow.on('closed', () => (mainWindow = null));
 });
-
-const createAboutWindow = () => {
-  aboutWindow = new BrowserWindow({
-    title: 'About ImageShrink',
-    width: 300,
-    height: 300,
-    icon: `${__dirname}/assets/icons/Icon_256x256.png`,
-    resizable: false,
-    backgroundColor: 'white',
-  });
-
-  aboutWindow.loadFile('./app/about.html');
-};
 
 const menu = [
   ...(isMac
